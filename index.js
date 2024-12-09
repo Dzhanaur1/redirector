@@ -1,15 +1,30 @@
-export default function handler(req, res) {
-  const { url } = req.query;
+const express = require("express");
+const app = express();
 
-  if (!url) {
-    return res.status(400).send("Missing URL parameter");
+// Пример промежуточного редиректа
+app.get("/redirect", (req, res) => {
+  const targetUrl = req.query.url;
+  if (!targetUrl) {
+    return res.status(400).send("URL параметр отсутствует");
   }
 
-  const decodedUrl = decodeURIComponent(url);
+  // Генерируем HTML-страницу для редиректа
+  res.send(`
+    <html>
+      <head>
+        <meta http-equiv="refresh" content="0; url=${decodeURIComponent(
+          targetUrl
+        )}" />
+      </head>
+      <body>
+        <p>Перенаправление...</p>
+      </body>
+    </html>
+  `);
+});
 
-  if (!decodedUrl.startsWith("v2raytun://")) {
-    return res.status(400).send("Invalid URL scheme");
-  }
-
-  return res.redirect(decodedUrl);
-}
+// Запуск сервера
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
