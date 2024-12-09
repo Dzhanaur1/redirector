@@ -1,13 +1,15 @@
-const express = require("express");
-const app = express();
-const PORT = 4000;
+export default function handler(req, res) {
+  const { url } = req.query;
 
-app.get("/home", (req, res) => {
-  res.status(200).json("Welcome, your app is working well");
-});
+  if (!url) {
+    return res.status(400).send("Missing URL parameter");
+  }
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+  const decodedUrl = decodeURIComponent(url);
 
-module.exports = app;
+  if (!decodedUrl.startsWith("v2raytun://")) {
+    return res.status(400).send("Invalid URL scheme");
+  }
+
+  return res.redirect(decodedUrl);
+}
