@@ -22,7 +22,23 @@ app.get("/redirect", (req, res) => {
     </html>
   `);
 });
+app.post("/payment/webhook", (req, res) => {
+  const { event, object } = req.body;
 
+  if (event === "payment.succeeded") {
+    console.log("Платеж успешно завершён:", object);
+    // Обновите статус платежа в базе данных
+    // Пример: updatePaymentStatus(object.id, "succeeded");
+  } else if (event === "payment.canceled") {
+    console.log("Платеж отменён:", object);
+    // Обновите статус платежа в базе данных
+    // Пример: updatePaymentStatus(object.id, "canceled");
+  } else {
+    console.warn("Получено неизвестное событие:", event);
+  }
+
+  res.sendStatus(200); // Подтверждаем успешный приём
+});
 // Запуск сервера
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
